@@ -96,7 +96,7 @@ OverviewScreen.stackOptions = ({ theme, navigation }) => ({
     <View style={{ flexDirection: 'row', alignSelf: 'flex-start' }}>
       {/* TODO: Remove */}
       <Text style={{ color: tintColor, position: 'relative', paddingTop: 15 }}>
-        Beta
+        DEMO
       </Text>
       <IconButton
         icon={({ size }) => (
