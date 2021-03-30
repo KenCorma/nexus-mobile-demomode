@@ -26,6 +26,13 @@ import SetRecoveryScreen from './screens/SetRecoveryScreen';
 import ChangePasswordScreen from './screens/ChangePasswordScreen';
 import CoreInfoScreen from './screens/CoreInfoScreen';
 import AboutScreen from './screens/AboutScreen';
+
+//Demo
+import DemoPOSScreen from './screens/Demo/DemoPOS';
+import DemoTokenizeScreen from './screens/Demo/DemoTokenize';
+import DemoAssetScreen from './screens/Demo/DemoAsset';
+import DemoRoyaltiesScreen from './screens/Demo/DemoRoyalties';
+
 import { useTheme } from 'lib/theme';
 import { selectLoggedIn } from 'lib/user';
 import { getStore } from 'store';
@@ -54,6 +61,10 @@ const screens = [
   ChangePasswordScreen,
   CoreInfoScreen,
   AboutScreen,
+  DemoPOSScreen,
+  DemoTokenizeScreen,
+  DemoAssetScreen,
+  DemoRoyaltiesScreen,
 ];
 
 export default function StackNavigator({ navigation }) {
