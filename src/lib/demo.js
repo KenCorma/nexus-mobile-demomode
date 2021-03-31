@@ -13,6 +13,15 @@ export async function loadInvoices() {
   }
 }
 
+export async function sendInvoice(invoiceData) {
+  const store = getStore();
+  try {
+    const result = await callAPI('invoices/create/invoice', invoiceData);
+  } catch (err) {
+    throw err;
+  }
+}
+
 export function fakeAddInvoice() {
   const store = getStore();
   store.dispatch({

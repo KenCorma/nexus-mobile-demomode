@@ -1,13 +1,75 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { View } from 'react-native';
-import { Button, Surface } from 'react-native-paper';
+import { Button, Surface, FAB } from 'react-native-paper';
 
 import QRCode from 'react-native-qrcode-svg';
 
 import Text from 'components/Text';
 import SvgIcon from 'components/SvgIcon';
 import { useTheme, disabledColor } from 'lib/theme';
+import TextBox from 'components/TextBox';
+import { Formik, useFormikContext } from 'formik';
+
+import * as yup from 'yup';
+
+const returnItemList = ({ values }) =>
+  new Array(values.numberOfItems).fill('blank').map((e, i) => formItem(i));
+
+const formItem = (element) => (
+  <View
+    key={`formItem${element}`}
+    style={{
+      flex: 1,
+      width: '100%',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    }}
+  >
+    <TextBox.Formik
+      name={`${element}.name`}
+      mode="outlined"
+      background={['surface', 2]}
+      label={`Name`}
+      style={{ width: '25%' }}
+    />
+
+    <TextBox.Formik
+      name={`${element}.units`}
+      mode="outlined"
+      background={['surface', 2]}
+      label={`Units`}
+      keyboardType="numeric"
+      style={{ width: '25%' }}
+    />
+
+    <TextBox.Formik
+      name={`${element}.unitCost`}
+      mode="outlined"
+      background={['surface', 2]}
+      label={`PricePer`}
+      keyboardType="numeric"
+      style={{ width: '25%' }}
+    />
+  </View>
+);
+
+const returnPlusButton = (props) => {
+  const { setFieldValue, values } = props;
+  return (
+    <FAB
+      animated={false}
+      mode="contained"
+      onPress={() => {
+        console.log(setFieldValue);
+        setFieldValue('numberOfItems', values.numberOfItems + 1);
+      }}
+      label="+"
+    />
+  );
+};
 
 export default function Seller() {
   const [process, setProcess] = useState(0);
@@ -16,7 +78,7 @@ export default function Seller() {
   const defaultAddress = useSelector((state) =>
     state.user.accounts.filter((e) => e.name === 'default')
   );
-  //console.log(defaultAddress);
+
   return (
     <View>
       <Text
@@ -46,16 +108,56 @@ export default function Seller() {
           1: (
             <>
               <View style={{ backgroundColor: theme.background }}>
-                <Text sub>Scan Payment Address</Text>
-                <QRCode
-                  value={defaultAddress.address}
-                  size={200}
-                  color={theme.foreground}
-                  backgroundColor={
-                    theme.dark ? overlay(5, theme.surface) : theme.surface
-                  }
-                />
-                <Text sub>Waiting for response...</Text>
+                <Text sub>Set Up invoice</Text>
+                <Formik
+                  initialValues={{
+                    numberOfItems: 1,
+                    amount: '',
+                    nameOrAddress: '',
+                    reference: '',
+                  }}
+                  validationSchema={yup.object().shape({
+                    nameOrAddress: yup.string().required('Required!'),
+                    amount: yup
+                      .number()
+                      .typeError('Invalid!')
+                      .min(0, 'Invalid!'),
+                    reference: yup
+                      .number()
+                      .typeError('Invalid!')
+                      .integer('Invalid!')
+                      .min(0, 'Invalid!'),
+                  })}
+                  onSubmit={async (
+                    { nameOrAddress, amount, reference },
+                    { setFieldError }
+                  ) => {
+                    const resolved = await callAPI('system/validate/address', {
+                      address: nameOrAddress,
+                    });
+                    if (resolved) {
+                      //send
+                    } else {
+                      setFieldError('nameOrAddress', 'Invalid name/address!');
+                    }
+                  }}
+                >
+                  {({ handleSubmit, isSubmitting, ...rest }) => (
+                    <>
+                      {returnItemList(rest)}
+                      {returnPlusButton(rest)}
+                      <FAB
+                        style={{ marginTop: 10 }}
+                        animated={false}
+                        mode="contained"
+                        onPress={handleSubmit}
+                        loading={isSubmitting}
+                        disabled={isSubmitting}
+                        label={isSubmitting ? 'Validating...' : 'Proceed'}
+                      />
+                    </>
+                  )}
+                </Formik>
               </View>
             </>
           ),
