@@ -7,6 +7,7 @@ import core from './core';
 import user from './user';
 import market from './market';
 import transactions from './transactions';
+import demo from './demo';
 
 export default function createRootReducer() {
   return combineReducers({
@@ -17,5 +18,6 @@ export default function createRootReducer() {
     user,
     market,
     transactions,
+    demo,
   });
 }
