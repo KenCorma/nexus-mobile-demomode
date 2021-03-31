@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import { useSelector } from 'react-redux';
-import { Surface } from 'react-native-paper';
+import { Button, Surface } from 'react-native-paper';
 
 import Divider from 'components/Divider';
 import InfoField from 'components/InfoField';
@@ -9,10 +9,19 @@ import ScreenBody from 'components/ScreenBody';
 import Text from 'components/Text';
 import { useTheme } from 'lib/theme';
 
+import Buyer from './Buyer';
+import Seller from './Seller';
+
 const styles = {
   infoSection: {
     elevation: 3,
-    paddingHorizontal: 30,
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
   legal: {
     paddingHorizontal: 20,
@@ -22,6 +31,8 @@ const styles = {
 };
 
 export default function DemoPOSScreen() {
+  const theme = useTheme();
+  const [posMode, setPOSMode] = useState('');
   const coreVer = useSelector((state) => state.core.info.version)
     .substring(0, 10)
     .replace(/[^0-9\.]+/g, '');
@@ -30,12 +41,31 @@ export default function DemoPOSScreen() {
     <ScreenBody>
       <Surface style={styles.infoSection}>
         <Divider />
-        <InfoField inline label="Embedded core version" value={coreVer} />
+        <Button
+          mode="contained"
+          labelStyle={{ fontSize: 12 }}
+          style={{ width: '45%' }}
+          onPress={() => {
+            setPOSMode('Buyer');
+          }}
+        >
+          Buyer Mode
+        </Button>
+        <Button
+          mode="contained"
+          labelStyle={{ fontSize: 12 }}
+          style={{ width: '45%' }}
+          onPress={() => {
+            setPOSMode('Seller');
+          }}
+        >
+          Seller Mode
+        </Button>
         <Divider />
       </Surface>
 
       <View style={styles.legal}>
-        <Text>THIS IS LEFT BLANK</Text>
+        {posMode != '' && (posMode === 'Buyer' ? <Buyer /> : <Seller />)}
       </View>
     </ScreenBody>
   );
