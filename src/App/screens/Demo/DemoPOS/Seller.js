@@ -13,6 +13,8 @@ import { Formik, useFormikContext } from 'formik';
 
 import * as yup from 'yup';
 
+const blankInvoiceEntry = { name: 'Item', units: '1', unitCost: '1' };
+
 const returnItemList = ({ values }) =>
   new Array(values.numberOfItems).fill('blank').map((e, i) => formItem(i));
 
@@ -29,7 +31,7 @@ const formItem = (element) => (
     }}
   >
     <TextBox.Formik
-      name={`${element}.name`}
+      name={`invoiceItems[${element}].name`}
       mode="outlined"
       background={['surface', 2]}
       label={`Name`}
@@ -37,7 +39,7 @@ const formItem = (element) => (
     />
 
     <TextBox.Formik
-      name={`${element}.units`}
+      name={`invoiceItems[${element}].units`}
       mode="outlined"
       background={['surface', 2]}
       label={`Units`}
@@ -46,7 +48,7 @@ const formItem = (element) => (
     />
 
     <TextBox.Formik
-      name={`${element}.unitCost`}
+      name={`invoiceItems[${element}].unitCost`}
       mode="outlined"
       background={['surface', 2]}
       label={`PricePer`}
@@ -63,11 +65,41 @@ const returnPlusButton = (props) => {
       animated={false}
       mode="contained"
       onPress={() => {
-        console.log(setFieldValue);
+        values.invoiceItems.push(blankInvoiceEntry);
+        setFieldValue('invoiceItems', values.invoiceItems);
         setFieldValue('numberOfItems', values.numberOfItems + 1);
       }}
       label="+"
     />
+  );
+};
+
+const returnMinusButton = (props) => {
+  const { setFieldValue, values } = props;
+  return (
+    <FAB
+      animated={false}
+      style={{ marginTop: 5 }}
+      mode="contained"
+      onPress={() => {
+        values.invoiceItems.pop();
+        setFieldValue('invoiceItems', values.invoiceItems);
+        setFieldValue('numberOfItems', values.numberOfItems - 1);
+      }}
+      label="-"
+    />
+  );
+};
+
+const returnTotal = ({ values }) => {
+  const { invoiceItems } = values;
+  console.log(invoiceItems);
+  return (
+    <Text>
+      {invoiceItems
+        .map((e) => Number(e.units) * Number(e.unitCost))
+        .reduce((sum, i) => sum + i)}
+    </Text>
   );
 };
 
@@ -112,33 +144,15 @@ export default function Seller() {
                 <Formik
                   initialValues={{
                     numberOfItems: 1,
-                    amount: '',
-                    nameOrAddress: '',
-                    reference: '',
+                    invoiceItems: [blankInvoiceEntry],
                   }}
-                  validationSchema={yup.object().shape({
-                    nameOrAddress: yup.string().required('Required!'),
-                    amount: yup
-                      .number()
-                      .typeError('Invalid!')
-                      .min(0, 'Invalid!'),
-                    reference: yup
-                      .number()
-                      .typeError('Invalid!')
-                      .integer('Invalid!')
-                      .min(0, 'Invalid!'),
-                  })}
-                  onSubmit={async (
-                    { nameOrAddress, amount, reference },
-                    { setFieldError }
-                  ) => {
-                    const resolved = await callAPI('system/validate/address', {
-                      address: nameOrAddress,
-                    });
-                    if (resolved) {
-                      //send
-                    } else {
-                      setFieldError('nameOrAddress', 'Invalid name/address!');
+                  onSubmit={async ({ invoiceItems }, {}) => {
+                    const total = invoiceItems
+                      .map((e) => Number(e.units) * Number(e.unitCost))
+                      .reduce((sum, i) => sum + i);
+                    console.log(total);
+                    if (!isNaN(total)) {
+                      setProcess(2);
                     }
                   }}
                 >
@@ -146,6 +160,8 @@ export default function Seller() {
                     <>
                       {returnItemList(rest)}
                       {returnPlusButton(rest)}
+                      {returnMinusButton(rest)}
+                      {returnTotal(rest)}
                       <FAB
                         style={{ marginTop: 10 }}
                         animated={false}
@@ -160,6 +176,11 @@ export default function Seller() {
                 </Formik>
               </View>
             </>
+          ),
+          2: (
+            <View>
+              <Text>FFFF</Text>
+            </View>
           ),
         }[process]
       }
