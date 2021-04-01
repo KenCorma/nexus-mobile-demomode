@@ -12,6 +12,8 @@ import TextBox from 'components/TextBox';
 import { Formik, useFormikContext } from 'formik';
 
 import * as yup from 'yup';
+import QRScanner from 'components/AddressPicker/QRScanner';
+import { callAPI } from 'lib/api';
 
 const blankInvoiceEntry = { name: 'Item', units: '1', unitCost: '1' };
 
@@ -105,6 +107,7 @@ const returnTotal = ({ values }) => {
 
 export default function Seller() {
   const [process, setProcess] = useState(0);
+  const [customerAddress, setCustomerAddress] = useState('');
 
   const theme = useTheme();
   const defaultAddress = useSelector((state) =>
@@ -179,7 +182,62 @@ export default function Seller() {
           ),
           2: (
             <View>
-              <Text>FFFF</Text>
+              <Text>Get ready to scan customer's QR code</Text>
+              <Button mode="contained" onPress={() => setProcess(3)}></Button>
+            </View>
+          ),
+          3: (
+            <QRScanner
+              setAddress={(address) => {
+                setCustomerAddress(address);
+                setProcess(4);
+              }}
+            />
+          ),
+          4: (
+            <View>
+              <Text>Invoice is ready to be sent</Text>
+              <Formik
+                initialValues={{
+                  invoice: {},
+                }}
+                onSubmit={async ({ invoice }, {}) => {
+                  const sendInvoiceResult = await callAPI('');
+                  let waitForConfirmation = true;
+                  while (waitForConfirmation) {
+                    waitForConfirmation = new Promise((resolve) =>
+                      setTimeout(resolve, 1000)
+                    );
+                  }
+                  setProcess(5);
+                }}
+              >
+                {({ handleSubmit, isSubmitting, ...rest }) => (
+                  <>
+                    {returnItemList(rest)}
+                    {returnPlusButton(rest)}
+                    {returnMinusButton(rest)}
+                    {returnTotal(rest)}
+                    <FAB
+                      style={{ marginTop: 10 }}
+                      animated={false}
+                      mode="contained"
+                      onPress={handleSubmit}
+                      loading={isSubmitting}
+                      disabled={isSubmitting}
+                      label={isSubmitting ? 'Validating...' : 'Proceed'}
+                    />
+                  </>
+                )}
+              </Formik>
+            </View>
+          ),
+          5: (
+            <View>
+              <Text>Invoice is now paid and confirmed</Text>
+              <Button mode="contained" onPress={() => {}}>
+                Finish Demo
+              </Button>
             </View>
           ),
         }[process]
