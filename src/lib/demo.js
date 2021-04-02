@@ -22,6 +22,60 @@ export async function sendInvoice(invoiceData) {
   }
 }
 
+export async function loadAssets() {
+  const store = getStore();
+  try {
+    const assets = await callAPI('users/list/assets');
+    store.dispatch({
+      type: TYPE.DEMO_ADD_ASSETS,
+      payload: assets,
+    });
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function fakeAddAsset() {
+  const store = getStore();
+  store.dispatch({
+    type: TYPE.DEMO_ADD_ASSETS,
+    payload: [
+      {
+        address: '8B7SMKmECgYU1ydBQbzp5FCSe4AnkU2EwLE59D7eQDBpixmLZ2c',
+        timestamp: '1553227128',
+        owner:
+          'bf501d4f3d81c31f62038984e923ad01546ff678e305a7cc11b1931742524ce1',
+        json: [
+          {
+            name: 'name',
+            type: 'string',
+            value: 'Program',
+            mutable: false,
+          },
+          {
+            name: 'version',
+            type: 'string',
+            value: 'v1.0.1',
+            mutable: true,
+          },
+          {
+            name: 'hash',
+            type: 'string',
+            value: 'JDSHKASHDFKJNEIEWINLSDNBFLSHFUIPESNFLKSJDNL',
+            mutable: true,
+          },
+          {
+            name: 'url',
+            type: 'string',
+            value: 'https://foo.bar',
+            mutable: true,
+          },
+        ],
+      },
+    ],
+  });
+}
+
 export function fakeAddInvoice() {
   const store = getStore();
   store.dispatch({

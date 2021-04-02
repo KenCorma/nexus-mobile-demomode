@@ -6,6 +6,7 @@ import Text from 'components/Text';
 import TextBox from 'components/TextBox';
 import { Formik } from 'formik';
 import { callAPI } from 'lib/api';
+import { fakeAddAsset } from 'lib/demo';
 
 export default function Builder() {
   const [process, setProcess] = useState(0);
@@ -54,10 +55,14 @@ export default function Builder() {
                         },
                       ],
                     };
+                    fakeAddAsset();
+                    setProcess(1);
+                    /*
                     const result = await callAPI('assets/create/asset', params);
                     if (result.address) {
                       setProcess(1);
                     }
+                    */
                   }}
                 >
                   {({ handleSubmit, isSubmitting, ...rest }) => (
