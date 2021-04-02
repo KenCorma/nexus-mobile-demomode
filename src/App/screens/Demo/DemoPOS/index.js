@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { Button, Surface } from 'react-native-paper';
 
 import Divider from 'components/Divider';
-import InfoField from 'components/InfoField';
 import ScreenBody from 'components/ScreenBody';
 import Text from 'components/Text';
 import { useTheme } from 'lib/theme';
@@ -33,9 +32,6 @@ const styles = {
 export default function DemoPOSScreen() {
   const theme = useTheme();
   const [posMode, setPOSMode] = useState('');
-  const coreVer = useSelector((state) => state.core.info.version)
-    .substring(0, 10)
-    .replace(/[^0-9\.]+/g, '');
 
   return (
     <ScreenBody>
