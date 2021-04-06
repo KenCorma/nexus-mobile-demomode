@@ -11,6 +11,7 @@ import { useTheme } from 'lib/theme';
 
 import Viewer from './Viewer';
 import Builder from './Builder';
+import { loadAssets } from 'lib/demo';
 
 const styles = {
   infoSection: {
@@ -41,7 +42,8 @@ export default function DemoAssetScreen() {
           mode="contained"
           labelStyle={{ fontSize: 12 }}
           style={{ width: '45%' }}
-          onPress={() => {
+          onPress={async () => {
+            await loadAssets();
             setAssetMode('Viewer');
           }}
         >

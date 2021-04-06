@@ -22,15 +22,10 @@ const styles = {
 };
 
 export default function DemoTokenizeScreen() {
-  const coreVer = useSelector((state) => state.core.info.version)
-    .substring(0, 10)
-    .replace(/[^0-9\.]+/g, '');
-
   return (
     <ScreenBody>
       <Surface style={styles.infoSection}>
         <Divider />
-        <InfoField inline label="Embedded core version" value={coreVer} />
         <Divider />
       </Surface>
 

@@ -28,6 +28,7 @@ export default function Builder() {
                   onSubmit={async ({ name, version, hash, url }, {}) => {
                     const params = {
                       format: 'JSON',
+                      pin: '1234',
                       json: [
                         {
                           name: 'name',
@@ -55,14 +56,12 @@ export default function Builder() {
                         },
                       ],
                     };
-                    fakeAddAsset();
-                    setProcess(1);
-                    /*
                     const result = await callAPI('assets/create/asset', params);
                     if (result.address) {
                       setProcess(1);
+                    } else {
+                      throw 'error';
                     }
-                    */
                   }}
                 >
                   {({ handleSubmit, isSubmitting, ...rest }) => (
