@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Button, Surface } from 'react-native-paper';
@@ -11,11 +11,19 @@ import { useTheme } from 'lib/theme';
 import { callAPI } from 'lib/api';
 
 import Landscape from './Landscape';
+import Generate from './Generate';
+import Viewer from './Viewer';
 
 const styles = {
   infoSection: {
     elevation: 3,
-    paddingHorizontal: 30,
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
   legal: {
     paddingHorizontal: 20,
@@ -25,21 +33,50 @@ const styles = {
 };
 
 export default function DemoTokenizeScreen() {
+  const [tokenizeMode, setTokenizeMode] = useState('');
   return (
     <ScreenBody>
       <Surface style={styles.infoSection}>
         <Divider />
+        <Button
+          mode="contained"
+          labelStyle={{ fontSize: 12 }}
+          style={{ width: '45%' }}
+          onPress={async () => {
+            setTokenizeMode('Viewer');
+          }}
+        >
+          View
+        </Button>
         <Divider />
+        <Button
+          mode="contained"
+          labelStyle={{ fontSize: 12 }}
+          style={{ width: '45%' }}
+          onPress={async () => {
+            setTokenizeMode('Generate');
+          }}
+        >
+          Generate
+        </Button>
       </Surface>
 
       <View style={styles.legal}>
-        <Text>THIS IS LEFT BLANK</Text>
+        {tokenizeMode != '' &&
+          (tokenizeMode === 'Generate' ? <Generate /> : <Viewer />)}
+      </View>
+    </ScreenBody>
+  );
+}
 
-        <Button
-          onPress={async () => {
-            console.log(
-              'Tokenize Demo'
-            ); /*
+DemoTokenizeScreen.nav = {
+  name: 'DemoTokenize',
+  options: {
+    title: 'Demo Tokenize',
+  },
+};
+
+/*
             const params = {
               pin: '1234',
               address: '878b6SR2AA2N6eZCEGq7N5itKckviMvSPdpis4XMX54q2bxRD2G',
@@ -81,20 +118,3 @@ export default function DemoTokenizeScreen() {
             const credit = await callAPI('tokens/debit/token', creditparams);
             console.log(credit);
             */
-
-            console.log(await callAPI('users/list/tokens'));
-          }}
-        >
-          test
-        </Button>
-      </View>
-    </ScreenBody>
-  );
-}
-
-DemoTokenizeScreen.nav = {
-  name: 'DemoTokenize',
-  options: {
-    title: 'Demo Tokenize',
-  },
-};
