@@ -105,8 +105,8 @@ export default function Landscape({ seed }) {
   return (
     <Svg
       width="100%"
-      height="400"
-      viewBox={`0 0 ${layerWidth} 300`}
+      height="300"
+      viewBox={`0 50 ${layerWidth} 300`}
       xmlns="http://www.w3.org/2000/svg"
     >
       <Defs>

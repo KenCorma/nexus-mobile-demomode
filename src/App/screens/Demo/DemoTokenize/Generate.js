@@ -33,26 +33,62 @@ export default function Generate() {
       <Landscape seed={seed} />
       <Formik
         initialValues={{
-          name: '',
-          version: '',
-          hash: '',
-          url: '',
+          tokens: 1,
+          ownership: 100,
+          artName: 'Art',
+          accountName: '',
         }}
-        onSubmit={async ({ name, version, hash, url }, {}) => {}}
+        onSubmit={async ({ tokens, ownership, artName, accountName }, {}) => {
+          console.log('Generating');
+          const params = {};
+          const createTokenParams = {
+            pin: '1234',
+            name: artName,
+            supply: tokens,
+            decimals: 2,
+          };
+          const createTokenResult = await callAPI(
+            'tokens/create/token',
+            createTokenParams
+          );
+          console.log(createTokenResult);
+          setProcess(1);
+        }}
       >
-        {({ handleSubmit, isSubmitting, ...rest }) => (
+        {({ handleSubmit, isSubmitting }) => (
           <View style={{ width: 300 }}>
             <Button
               mode="contained"
+              style={{ marginTop: -50, marginBottom: 10 }}
               onPress={() => setSeed(makeSeed(seedLength))}
             >
               Re-Generate
             </Button>
             <TextBox.Formik
-              name={`name`}
+              name={`tokens`}
               mode="outlined"
               background={['surface', 2]}
-              label={`Name`}
+              keyboardType="numeric"
+              label={`Tokens`}
+            />
+            <TextBox.Formik
+              name={`ownership`}
+              mode="outlined"
+              background={['surface', 2]}
+              keyboardType="numeric"
+              label={`Ownership`}
+            />
+            <TextBox.Formik
+              name={`artName`}
+              mode="outlined"
+              background={['surface', 2]}
+              label={`Token Name`}
+            />
+            <TextBox.Formik
+              name={`accountName`}
+              mode="outlined"
+              background={['surface', 2]}
+              label={`Account Name`}
             />
             <FAB
               style={{ marginTop: 10 }}
