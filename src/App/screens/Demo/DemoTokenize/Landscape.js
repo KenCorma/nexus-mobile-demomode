@@ -108,6 +108,7 @@ export default function Landscape({ seed }) {
       height="300"
       viewBox={`0 50 ${layerWidth} 300`}
       xmlns="http://www.w3.org/2000/svg"
+      key={seed + 'SVG'}
     >
       <Defs>
         <RadialGradient id="fillBg" cx={sunX} cy={sunY}>

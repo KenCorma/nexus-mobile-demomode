@@ -47,6 +47,7 @@ export default function Generate() {
           const createAssetParams = {
             pin: '1234',
             name: artName,
+            type: 'ArtScape',
             seed: seed,
           };
           const createAssetResult = await callAPI(
@@ -60,7 +61,7 @@ export default function Generate() {
             pin: '1234',
             name: `${artName}Tokens`,
             supply: tokens,
-            decimals: 2,
+            decimals: 0,
           };
           const createTokenResult = await callAPI(
             'tokens/create/token',
@@ -97,7 +98,7 @@ export default function Generate() {
           const ownershipParams = {
             pin: '1234',
             name: `${username}:${artName}Tokens`,
-            amount: ((ownership / 100) * tokens).toFixed(2),
+            amount: ((ownership / 100) * tokens).toFixed(0),
             name_to: accountName,
           };
           const ownershipResult = await callAPI(
