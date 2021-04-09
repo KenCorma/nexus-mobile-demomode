@@ -27,8 +27,9 @@ const defaultSeed = makeSeed(20);
 
 export default function Generate() {
   const [process, setProcess] = useState(0);
+  const username = useSelector((state) => state.user.status?.username);
   const [seed, setSeed] = useState(defaultSeed);
-  return (
+  return process === 0 ? (
     <>
       <Landscape seed={seed} />
       <Formik
@@ -41,9 +42,23 @@ export default function Generate() {
         onSubmit={async ({ tokens, ownership, artName, accountName }, {}) => {
           console.log('Generating');
           const params = {};
-          const createTokenParams = {
+
+          //Create Asset
+          const createAssetParams = {
             pin: '1234',
             name: artName,
+            seed: seed,
+          };
+          const createAssetResult = await callAPI(
+            'assets/create/asset',
+            createAssetParams
+          );
+          console.log(createAssetResult);
+
+          //Create token
+          const createTokenParams = {
+            pin: '1234',
+            name: `${artName}Tokens`,
             supply: tokens,
             decimals: 2,
           };
@@ -52,6 +67,45 @@ export default function Generate() {
             createTokenParams
           );
           console.log(createTokenResult);
+
+          //Tokenize
+          const tokenizeParams = {
+            pin: '1234',
+            name: `${username}:${artName}`,
+            token_name: `${username}:${artName}Tokens`,
+          };
+          const tokenizeResult = await callAPI(
+            'assets/tokenize/asset',
+            tokenizeParams
+          );
+          console.log(tokenizeResult);
+
+          // Make Account
+          const makeAccountParams = {
+            pin: '1234',
+            token_name: `${username}:${artName}Tokens`,
+            name: accountName,
+          };
+
+          const makeAccountResult = await callAPI(
+            'tokens/create/account',
+            makeAccountParams
+          );
+          console.log(makeAccountResult);
+
+          //Set Ownership
+          const ownershipParams = {
+            pin: '1234',
+            name: `${username}:${artName}Tokens`,
+            amount: ((ownership / 100) * tokens).toFixed(2),
+            name_to: accountName,
+          };
+          const ownershipResult = await callAPI(
+            'tokens/debit/token',
+            ownershipParams
+          );
+          console.log(ownershipResult);
+
           setProcess(1);
         }}
       >
@@ -102,6 +156,12 @@ export default function Generate() {
           </View>
         )}
       </Formik>
+    </>
+  ) : (
+    <>
+      <Text>Congradulations your Asset has been Tokenized!</Text>
+
+      <Text>Go to the View page to view your Art Assets</Text>
     </>
   );
 }

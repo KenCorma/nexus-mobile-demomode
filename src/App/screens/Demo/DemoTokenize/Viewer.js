@@ -12,6 +12,22 @@ export default function Viewer() {
   return (
     <View>
       <Text>Viewer</Text>
+      <Button
+        mode="contained"
+        onPress={async () => {
+          const list = await callAPI('users/list/tokens');
+          const assets = await callAPI('users/list/assets');
+          const account = await callAPI('users/list/accounts');
+
+          console.log('********');
+          console.log(list);
+          console.log(assets);
+          console.log(account);
+          console.log('********');
+        }}
+      >
+        TEST
+      </Button>
     </View>
   );
 }
