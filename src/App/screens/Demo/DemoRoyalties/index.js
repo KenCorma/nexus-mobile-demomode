@@ -1,13 +1,14 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import { useSelector } from 'react-redux';
-import { Surface } from 'react-native-paper';
+import { Button, Surface } from 'react-native-paper';
 
 import Divider from 'components/Divider';
 import InfoField from 'components/InfoField';
 import ScreenBody from 'components/ScreenBody';
 import Text from 'components/Text';
 import { useTheme } from 'lib/theme';
+import { callAPI } from 'lib/api';
 
 const styles = {
   infoSection: {
@@ -30,12 +31,34 @@ export default function DemoRoyaltiesScreen() {
     <ScreenBody>
       <Surface style={styles.infoSection}>
         <Divider />
-        <InfoField inline label="Embedded core version" value={coreVer} />
+        <Image
+          style={{ height: 500, marginTop: 30, marginBottom: 30 }}
+          source={{
+            uri:
+              'https://s.studiobinder.com/wp-content/uploads/2019/06/Movie-Poster-Template-Movie-Credits-StudioBinder.jpg',
+          }}
+        />
         <Divider />
       </Surface>
 
       <View style={styles.legal}>
-        <Text>THIS IS LEFT BLANK</Text>
+        <Button
+          mode="contained"
+          onPress={async () => {
+            const params = {
+              pin: '1234',
+              name: 'default',
+              amount: 10,
+              name_to: 'kendal:ComedyMovie',
+            };
+
+            const result = await callAPI('finance/debit/account', params);
+
+            console.log(result);
+          }}
+        >
+          Buy Movie
+        </Button>
       </View>
     </ScreenBody>
   );
